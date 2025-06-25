@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "JoyaGoo Modal Remover",
+  "version": "1.0",
+  "description": "Usuwa modal z ostrzeżeniem z strony JoyaGoo.com",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": ["https://joyagoo.com/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Usuń modal JoyaGoo",
+    "default_icon": {
+      "16": "icon/icon16.png",
+      "32": "icon/icon32.png",
+      "48": "icon/icon48.png",
+      "128": "icon/icon128.png"
+    },
+
+    "icons": {
+      "16": "icon/icon16.png",
+      "32": "icon/icon32.png",
+      "48": "icon/icon48.png",
+      "128": "icon/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://joyagoo.com/*", "https://findqc.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

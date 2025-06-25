@@ -1,0 +1,129 @@
+body {
+        width: 300px;
+        padding: 20px;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        margin: 0;
+      }
+
+      .container {
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 18px;
+        margin-bottom: 15px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .description {
+        font-size: 12px;
+        margin-bottom: 20px;
+        opacity: 0.9;
+        line-height: 1.4;
+      }
+
+      #removeButton {
+        background: #ff6b6b;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        margin-bottom: 10px;
+        width: 100%;
+      }
+
+      #removeButton:hover {
+        background: #ff5252;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+      }
+
+        #removeButton:active {
+        transform: translateY(0);
+      }
+
+      #qcSearchButton {
+        background: #69aeee;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(1, 20, 85, 0.4);
+        margin-bottom: 10px;
+        width: 100%;
+      }
+
+      #qcSearchButton:hover {
+        background: #2c91f0;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(15, 0, 68, 0.6);
+      }
+
+      #qcSearchButton:active {
+        transform: translateY(0);
+      }
+      
+      #qcFromProductButton {
+        background: #69aeee;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(1, 20, 85, 0.4);
+        margin-bottom: 10px;
+        width: 100%;
+      }
+
+      #qcFromProductButton:hover {
+        background: #2c91f0;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(15, 0, 68, 0.6);
+      }
+
+      #qcFromProductButton:active {
+        transform: translateY(0);
+      }
+
+      #status {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        min-height: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+      }
+
+      .success {
+        background: rgba(76, 175, 80, 0.3) !important;
+        border: 1px solid rgba(76, 175, 80, 0.5);
+      }
+
+      .error {
+        background: rgba(244, 67, 54, 0.3) !important;
+        border: 1px solid rgba(244, 67, 54, 0.5);
+      }
+
+      .website-info {
+        font-size: 11px;
+        margin-top: 15px;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        opacity: 0.8;
+      }
