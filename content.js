@@ -13,15 +13,10 @@ function removeJoyaGooModal() {
   }
 }
 function removeModalByContent() {
-  const modals = document.querySelectorAll(
-    'div[role="none"].n-modal-container'
-  );
+  const modals = document.querySelectorAll('div[role="none"].n-modal-container');
   for (let modal of modals) {
     const warningText = modal.querySelector(".product-reminder-title");
-    if (
-      warningText &&
-      warningText.textContent.includes("JoyaGoo warm reminder")
-    ) {
+    if (warningText && warningText.textContent.includes("JoyaGoo warm reminder")) {
       modal.remove();
       console.log("Modal z ostrzeżeniem został usunięty");
       return true;
@@ -62,7 +57,7 @@ if (document.readyState === "loading") {
   attemptModalRemoval();
 }
 
-// --- Mutation observer ---
+// --- Mutation observer for modal ---
 const observer = new MutationObserver(function (mutations) {
   mutations.forEach(function (mutation) {
     mutation.addedNodes.forEach(function (node) {
@@ -70,10 +65,7 @@ const observer = new MutationObserver(function (mutations) {
         if (node.matches && node.matches(".n-modal-container")) {
           setTimeout(attemptModalRemoval, 100);
           setTimeout(clearHtmlStyle, 100);
-        } else if (
-          node.querySelector &&
-          node.querySelector(".n-modal-container")
-        ) {
+        } else if (node.querySelector && node.querySelector(".n-modal-container")) {
           setTimeout(attemptModalRemoval, 100);
           setTimeout(clearHtmlStyle, 100);
         }
@@ -92,28 +84,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({ success: success });
   }
   if (request.action === "getProductId") {
-    // Szukamy linku w odpowiednim divie
     let link = document.querySelector(".product-menu a.custom-link[href]");
     if (link) {
       let href = link.href;
       let qcType = null;
       let productId = null;
 
-      // Weidian
       if (/weidian\.com\/item\.html\?itemID=(\d+)/.test(href)) {
         qcType = "WD";
         productId = href.match(/itemID=(\d+)/)[1];
-      }
-      // Tmall/Taobao
-      else if (
+      } else if (
         /tmall\.com\/item\.htm.*[?&]id=(\d+)/.test(href) ||
         /taobao\.com\/item\.htm.*[?&]id=(\d+)/.test(href)
       ) {
         qcType = "TB";
         productId = href.match(/[?&]id=(\d+)/)[1];
-      }
-      // 1688
-      else if (/1688\.com\/offer\/(\d+)\.html/.test(href)) {
+      } else if (/1688\.com\/offer\/(\d+)\.html/.test(href)) {
         qcType = "T1688";
         productId = href.match(/offer\/(\d+)\.html/)[1];
       }
@@ -130,53 +116,42 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-// Funkcja: dodaje button na stronie findqc.com, który przenosi do joyagoo.com
+// --- Funkcja dodająca button na findqc.com ---
 function addJoyagooButtonOnQC() {
-  // Szukamy diva z linkiem do oryginalnego produktu
-  // (np. https://weidian.com/item.html?itemID=7441005541)
   const linkDiv = document.querySelector(".text-underline.primary");
-  if (!linkDiv) return; // Nie ma linku, nie dodajemy przycisku
+  if (!linkDiv) return;
 
   const productUrl = linkDiv.textContent.trim();
-  if (!productUrl.startsWith("http")) return; // Nie wygląda na link
+  if (!productUrl.startsWith("http")) return;
 
-  // Parsujemy platformę i id
   let joyagooPlatform = null,
     joyagooId = null;
 
-  // Weidian
   if (/weidian\.com\/item\.html\?itemID=(\d+)/.test(productUrl)) {
     joyagooPlatform = "WEIDIAN";
     joyagooId = productUrl.match(/itemID=(\d+)/)[1];
-  }
-  // Taobao/Tmall
-  else if (
+  } else if (
     /tmall\.com\/item\.htm.*[?&]id=(\d+)/.test(productUrl) ||
     /taobao\.com\/item\.htm.*[?&]id=(\d+)/.test(productUrl)
   ) {
     joyagooPlatform = "TAOBAO";
     joyagooId = productUrl.match(/[?&]id=(\d+)/)[1];
-  }
-  // 1688
-  else if (/1688\.com\/offer\/(\d+)\.html/.test(productUrl)) {
+  } else if (/1688\.com\/offer\/(\d+)\.html/.test(productUrl)) {
     joyagooPlatform = "ALI_1688";
     joyagooId = productUrl.match(/offer\/(\d+)\.html/)[1];
   }
 
-  if (!joyagooPlatform || !joyagooId) return; // Nie rozpoznano
+  if (!joyagooPlatform || !joyagooId) return;
 
   const joyagooUrl = `https://joyagoo.com/product?id=${joyagooId}&platform=${joyagooPlatform}`;
 
-  // Sprawdzamy, czy button już istnieje
   if (document.getElementById("gotoJoyagooButton")) return;
 
-  // Tworzymy i stylizujemy przycisk
   const btn = document.createElement("button");
   btn.id = "gotoJoyagooButton";
   btn.textContent = "Otwórz w JoyaGoo";
   btn.onclick = () => window.open(joyagooUrl, "_blank");
 
-  // Dodajemy style przez <style> do <head> (tylko raz)
   if (!document.getElementById("gotoJoyagooButtonStyle")) {
     const style = document.createElement("style");
     style.id = "gotoJoyagooButtonStyle";
@@ -207,13 +182,102 @@ function addJoyagooButtonOnQC() {
     document.head.appendChild(style);
   }
 
-  // Dodajemy przycisk pod linkiem
   linkDiv.parentElement.appendChild(btn);
+}
+
+// --- Funkcja dodająca button do menu produktu na joyagoo.com ---
+function addQCButtonToProductMenu() {
+  const menuDiv = document.querySelector(".product-menu");
+  if (!menuDiv) return;
+  if (menuDiv.querySelector("#gotoQCButton")) return;
+
+  const productLink = menuDiv.querySelector("a.custom-link[href]");
+  if (!productLink) return;
+  const href = productLink.getAttribute("href");
+
+  let qcType = null,
+    productId = null;
+  if (/weidian\.com\/item\.html\?itemID=(\d+)/.test(href)) {
+    qcType = "WD";
+    productId = href.match(/itemID=(\d+)/)[1];
+  } else if (
+    /tmall\.com\/item\.htm.*[?&]id=(\d+)/.test(href) ||
+    /taobao\.com\/item\.htm.*[?&]id=(\d+)/.test(href)
+  ) {
+    qcType = "TB";
+    productId = href.match(/[?&]id=(\d+)/)[1];
+  } else if (/1688\.com\/offer\/(\d+)\.html/.test(href)) {
+    qcType = "T1688";
+    productId = href.match(/offer\/(\d+)\.html/)[1];
+  }
+
+  if (!qcType || !productId) return;
+
+  const qcUrl = `https://findqc.com/detail/${qcType}/${productId}?frm=1`;
+
+  const menuItem = document.createElement("div");
+  menuItem.id = "gotoQCButton";
+  menuItem.className = "pointer product-menu-item";
+  menuItem.style.display = "flex";
+  menuItem.style.alignItems = "center";
+  menuItem.style.cursor = "pointer";
+  menuItem.style.color = "rgb(51, 54, 57)";
+  menuItem.style.fontFamily = "source-han-sans, serif";
+  menuItem.style.fontSize = "14px";
+  menuItem.style.lineHeight = "19.6px";
+  menuItem.style.fontWeight = "400";
+  menuItem.style.marginLeft = "10px";
+  menuItem.style.userSelect = "none";
+
+  menuItem.innerHTML = `
+      <svg class="icon" viewBox="0 0 1024 1024" width="16px" height="16px" style="margin-right:6px;" xmlns="http://www.w3.org/2000/svg">
+        <path d="M896 554.7c-17.7 0-32 14.3-32 32v192c0 17.7-14.3 32-32 32H192c-17.7 0-32-14.3-32-32V288c0-17.7 14.3-32 32-32h192c17.7 0 32-14.3 32-32s-14.3-32-32-32H192c-52.9 0-96 43.1-96 96v490.7c0 52.9 43.1 96 96 96h640c52.9 0 96-43.1 96-96V586.7c0-17.7-14.3-32-32-32z" fill="#333639"></path>
+        <path d="M904.5 119.5c-12.5-12.5-32.8-12.5-45.3 0L432 546.7c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l427.2-427.2c12.5-12.5 12.5-32.8 0-45.3z" fill="#333639"></path>
+      </svg>
+      <span style="font-size: 12px;">Zobacz QC</span>
+    `;
+
+  menuItem.addEventListener("click", () => {
+    window.open(qcUrl, "_blank");
+  });
+
+  menuDiv.appendChild(menuItem);
+}
+
+// --- Optymalizacja dodawania przycisku do menu produktu ---
+function observeAndAddQCButton() {
+  const menuDiv = document.querySelector(".product-menu");
+  if (!menuDiv) return;
+
+  // Utwórz observer tylko dla menu produktu
+  const menuObserver = new MutationObserver(() => {
+    addQCButtonToProductMenu();
+  });
+  menuObserver.observe(menuDiv, { childList: true, subtree: true });
+
+  // Dodaj przycisk od razu
+  addQCButtonToProductMenu();
+}
+
+// --- Inicjalizacja ---
+if (location.hostname.includes("joyagoo.com")) {
+  document.addEventListener("DOMContentLoaded", observeAndAddQCButton);
+  if (
+    document.readyState === "complete" ||
+    document.readyState === "interactive"
+  ) {
+    observeAndAddQCButton();
+  }
 }
 
 if (location.hostname.includes("findqc.com")) {
   document.addEventListener("DOMContentLoaded", () => {
     setTimeout(addJoyagooButtonOnQC, 500);
   });
-  setTimeout(addJoyagooButtonOnQC, 1500); // fallback dla SPA
+  setTimeout(addJoyagooButtonOnQC, 1500);
 }
+
+// --- Jednorazowe wywołanie usuwania modala ---
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(attemptModalRemoval, 500);
+});
